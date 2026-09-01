@@ -15,6 +15,8 @@ Este projeto faz parte de uma pós-graduação em Tecnologia Java e serve como u
 - [ ] **Tags Customizadas:** Categorização flexível (ex: #Vagas, #Cursos, #Java) em relacionamento Muitos-para-Muitos.
 - [ ] **Web Scraping Autônomo:** Extração automática de metadados (título, imagem) da URL salva utilizando Jsoup.
 - [ ] **Sistema Anti-Procrastinação:** Alertas em background para links esquecidos ou próximos à data limite.
+- [ ] **Validação e Integridade:** Implementação de Expressões Regulares (Regex) nas entidades (ex: validação rígida de padrão hexadecimal para cores das tags).
+- [ ] **Database Migrations:** Implementação do **Flyway** para controle de versão e evolução segura dos scripts estruturais do banco de dados (substituindo a estratégia de DDL automática do Hibernate na transição para produção).
 
 ## 🛠️ Tecnologias Utilizadas
 - **Linguagem:** Java 25
@@ -108,7 +110,7 @@ classDiagram
 ```Yaml
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/gestor_links
+    url: jdbc:postgresql://localhost:5432/meu_gestor
     username: seu_usuario
     password: sua_senha
   security:
@@ -126,3 +128,11 @@ spring:
 ```bash
 mvn spring-boot:run
 ```
+
+### Executando com Docker (Recomendado)
+Para facilitar o ambiente de desenvolvimento, o projeto conta com um `docker-compose.yml` configurado com um banco PostgreSQL super leve.
+
+1. Suba o banco de dados em segundo plano:
+   ```bash
+   docker-compose up -d
+   ```
