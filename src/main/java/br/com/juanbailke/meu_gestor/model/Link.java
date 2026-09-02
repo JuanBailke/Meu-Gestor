@@ -27,7 +27,7 @@ public class Link {
 
     private Integer tempoEstimadoMinutos;
 
-    private LocalDateTime dataSalvamento =  LocalDateTime.now();
+    private LocalDateTime dataSalvamento;
 
     private LocalDateTime dataLimite;
 
@@ -49,6 +49,11 @@ public class Link {
     )
     private List<Tag> tags = new ArrayList<>();
 
+    @PrePersist
+    protected void onCreate() {
+        dataSalvamento = LocalDateTime.now();
+    }
+
     public Link() {
     }
 
@@ -57,7 +62,6 @@ public class Link {
                 String descricao,
                 String imagemCapa,
                 Integer tempoEstimadoMinutos,
-                LocalDateTime dataSalvamento,
                 LocalDateTime dataLimite,
                 StatusLink status,
                 Prioridade prioridade,
@@ -68,7 +72,6 @@ public class Link {
         this.descricao = descricao;
         this.imagemCapa = imagemCapa;
         this.tempoEstimadoMinutos = tempoEstimadoMinutos;
-        this.dataSalvamento = dataSalvamento;
         this.dataLimite = dataLimite;
         this.status = status;
         this.prioridade = prioridade;
@@ -122,10 +125,6 @@ public class Link {
 
     public LocalDateTime getDataSalvamento() {
         return dataSalvamento;
-    }
-
-    public void setDataSalvamento(LocalDateTime dataSalvamento) {
-        this.dataSalvamento = dataSalvamento;
     }
 
     public LocalDateTime getDataLimite() {

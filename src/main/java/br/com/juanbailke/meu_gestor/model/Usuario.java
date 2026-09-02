@@ -24,18 +24,21 @@ public class Usuario {
 
     private String idProvedor;
 
-    private LocalDateTime dataCriacao = LocalDateTime.now();
+    private LocalDateTime dataCriacao;
 
+    @PrePersist
+    protected void onCreate() {
+        dataCriacao = LocalDateTime.now();
+    }
     public Usuario() {
     }
 
-    public Usuario(String nome, String email, String urlFotoPerfil, ProvedorLogin provedorLogin, String idProvedor, LocalDateTime dataCriacao) {
+    public Usuario(String nome, String email, String urlFotoPerfil, ProvedorLogin provedorLogin, String idProvedor) {
         this.nome = nome;
         this.email = email;
         this.urlFotoPerfil = urlFotoPerfil;
         this.provedorLogin = provedorLogin;
         this.idProvedor = idProvedor;
-        this.dataCriacao = dataCriacao;
     }
 
     public Long getId() {
@@ -86,7 +89,4 @@ public class Usuario {
         return dataCriacao;
     }
 
-    public void setDataCriacao(LocalDateTime dataCriacao) {
-        this.dataCriacao = dataCriacao;
-    }
 }
