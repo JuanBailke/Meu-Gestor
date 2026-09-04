@@ -2,6 +2,8 @@ package br.com.juanbailke.meu_gestor.controller;
 
 import br.com.juanbailke.meu_gestor.model.Link;
 import br.com.juanbailke.meu_gestor.repository.LinkRepository;
+import br.com.juanbailke.meu_gestor.service.ScrapingService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,15 +15,29 @@ import java.util.Optional;
 public class LinkController {
 
     private final LinkRepository linkRepository;
+    private final ScrapingService scrapingService;
 
     public LinkController(LinkRepository linkRepository) {
         this.linkRepository = linkRepository;
+        this.scrapingService = new ScrapingService();
     }
 
     @PostMapping
     public ResponseEntity<Link> criarLink(@RequestBody Link link) {
+        if (link.getUrl() != null && !link.getUrl().isEmpty()) {
+            ScrapingService.MetaDados metaDados = scrapingService.extrair(link.getUrl());
+
+            if (link.getTitulo() == null || link.getTitulo().isEmpty())
+                link.setTitulo(metaDados.titulo());
+
+            if (link.getDescricao() == null || link.getDescricao().isEmpty())
+                link.setDescricao(metaDados.descricao());
+
+            if (link.getImagemCapa() == null || link.getImagemCapa().isEmpty())
+                link.setImagemCapa(metaDados.imagemCapa());
+        }
         Link linkSalvo = linkRepository.save(link);
-        return ResponseEntity.ok(linkSalvo);
+        return ResponseEntity.status(HttpStatus.CREATED).body(linkSalvo);
     }
 
     @GetMapping
