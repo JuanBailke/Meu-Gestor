@@ -2,6 +2,7 @@ package br.com.juanbailke.meu_gestor.model;
 
 import br.com.juanbailke.meu_gestor.model.enums.Prioridade;
 import br.com.juanbailke.meu_gestor.model.enums.StatusLink;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
@@ -16,6 +17,7 @@ public class Link {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Schema(description = "URL original do conteúdo", example = "https://github.com/JuanBailke/Meu-Gestor")
     private String url;
 
     private String titulo;
@@ -25,6 +27,7 @@ public class Link {
 
     private String imagemCapa;
 
+    @Schema(description = "Tempo estimado para consumir o conteúdo em minutos", example = "15")
     private Integer tempoEstimadoMinutos;
 
     private LocalDateTime dataSalvamento;

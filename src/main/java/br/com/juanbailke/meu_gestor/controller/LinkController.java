@@ -3,6 +3,11 @@ package br.com.juanbailke.meu_gestor.controller;
 import br.com.juanbailke.meu_gestor.model.Link;
 import br.com.juanbailke.meu_gestor.repository.LinkRepository;
 import br.com.juanbailke.meu_gestor.service.ScrapingService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -11,6 +16,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
+@Tag(name = "Gestão de Links", description = "Endpoints para criar, listar, atualizar e deletar links úteis.")
 @RequestMapping("/api/links")
 public class LinkController {
 
@@ -23,6 +29,11 @@ public class LinkController {
     }
 
     @PostMapping
+    @Operation(summary = "Salvar um novo link", description = "Cria um link no banco. Caso apenas a URL seja fornecida, o sistema fará Web Scraping autônomo (via Jsoup) para extrair o título e a capa.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Link criado com sucesso"),
+            @ApiResponse(responseCode = "400", description = "URL inválida ou ausente")
+    })
     public ResponseEntity<Link> criarLink(@RequestBody Link link) {
         if (link.getUrl() != null && !link.getUrl().isEmpty()) {
             ScrapingService.MetaDados metaDados = scrapingService.extrair(link.getUrl());
@@ -46,7 +57,9 @@ public class LinkController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Link> buscarLink(@PathVariable Long id) {
+    public ResponseEntity<Link> buscarLink(
+            @Parameter(description = "ID numérico gerado pelo banco de dados", example = "1")
+            @PathVariable Long id) {
         Optional<Link> link = linkRepository.findById(id);
         return link.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
