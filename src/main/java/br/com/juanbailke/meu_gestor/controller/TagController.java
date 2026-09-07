@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
+@io.swagger.v3.oas.annotations.tags.Tag(name = "Gestão de Tags", description = "Endpoints para criar, listar, atualizar e deletar tags atreladas às tarefas salvas.")
 @RequestMapping("/api/tags")
 public class TagController {
 

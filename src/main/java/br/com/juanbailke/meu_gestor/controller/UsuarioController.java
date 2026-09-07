@@ -2,6 +2,7 @@ package br.com.juanbailke.meu_gestor.controller;
 
 import br.com.juanbailke.meu_gestor.model.Usuario;
 import br.com.juanbailke.meu_gestor.repository.UsuarioRepository;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -10,6 +11,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
+@Tag(name = "Gestão de Usuários", description = "Endpoints para criar, listar, atualizar e deletar usuários.")
 @RequestMapping("/api/usuarios")
 public class UsuarioController {
 
