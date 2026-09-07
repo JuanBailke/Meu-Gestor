@@ -9,11 +9,11 @@ Este projeto faz parte de uma pós-graduação em Tecnologia Java e serve como u
 
 ## 🚀 Funcionalidades (MVP e Futuras)
 - [x] **Autenticação Segura:** Login Social via OAuth2 (Google Cloud), garantindo segurança delegada sem a necessidade de gerenciar senhas.
-- [ ] **Gestão de Links:** CRUD completo de links com título, descrição e capa.
+- [x] **Gestão de Links:** CRUD completo de links com título, descrição e capa.
+- [x] **Web Scraping Autônomo:** Extração automática de metadados (título, imagem) da URL salva utilizando Jsoup.
 - [ ] **Classificação e Prioridade:** Definição de tempo estimado de leitura (ex: 5 min, 2 horas) e nível de prioridade (Baixa, Média, Alta).
 - [ ] **Quadro Kanban (Status):** Fluxo de links entre "Na fila", "Em andamento", "Concluído" e "Arquivado".
 - [ ] **Tags Customizadas:** Categorização flexível (ex: #Vagas, #Cursos, #Java) em relacionamento Muitos-para-Muitos.
-- [ ] **Web Scraping Autônomo:** Extração automática de metadados (título, imagem) da URL salva utilizando Jsoup.
 - [ ] **Sistema Anti-Procrastinação:** Alertas em background para links esquecidos ou próximos à data limite.
 - [ ] **Validação e Integridade:** Implementação de Expressões Regulares (Regex) nas entidades (ex: validação rígida de padrão hexadecimal para cores das tags).
 - [ ] **Database Migrations:** Implementação do **Flyway** para controle de versão e evolução segura dos scripts estruturais do banco de dados (substituindo a estratégia de DDL automática do Hibernate na transição para produção).
@@ -98,41 +98,24 @@ classDiagram
 ### Pré-requisitos
 - Java Development Kit (JDK) 25
 - Maven instalado
-- PostgreSQL rodando localmente (ou banco em nuvem)
+- Docker e Docker Compose instalados (para o banco de dados)
 - Credenciais do Google Cloud Console (Client ID e Client Secret) configuradas
 
 ### Passos
 1. Clone o repositório:
-```bash
-   git clone [https://github.com/JuanBailke/Meu-Gestor.git](https://github.com/JuanBailke/Meu-Gestor.git)
-```
-2. Configure as variáveis de ambiente essenciais no arquivo `src/main/resources/application.yml`:
-```Yaml
-spring:
-  datasource:
-    url: jdbc:postgresql://localhost:5432/meu_gestor
-    username: seu_usuario
-    password: sua_senha
-  security:
-    oauth2:
-      client:
-        registration:
-          google:
-            client-id: ${GOOGLE_CLIENT_ID}
-            client-secret: ${GOOGLE_CLIENT_SECRET}
-            scope:
-              - email
-              - profile
-```
-3. Execute a aplicação via linha de comando ou pela sua IDE (recomendado: IntelliJ IDEA):
-```bash
-mvn spring-boot:run
-```
+   ```bash
+    git clone [https://github.com/JuanBailke/Meu-Gestor.git](https://github.com/JuanBailke/Meu-Gestor.git)
+   ```
 
-### Executando com Docker (Recomendado)
-Para facilitar o ambiente de desenvolvimento, o projeto conta com um `docker-compose.yml` configurado com um banco PostgreSQL super leve.
-
-1. Suba o banco de dados em segundo plano:
+2. Suba o banco de dados em segundo plano:
    ```bash
    docker-compose up -d
    ```
+3. Configure as credenciais do Google injetando as variáveis de ambiente `GOOGLE_CLIENT_ID` e `GOOGLE_CLIENT_SECRET` na sua IDE (IntelliJ IDEA) ou exportando-as no seu terminal.
+
+4. Execute a aplicação ativando o perfil de desenvolvimento (`dev`):
+   ```bash
+   mvn spring-boot:run -Dspring-boot.run.profiles=dev
+   ```
+5. Acesse a documentação interativa da API (Swagger) em:
+   `http://localhost:8080/swagger-ui.html`
