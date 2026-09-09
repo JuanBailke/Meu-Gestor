@@ -63,21 +63,35 @@ public class LinkController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Link>> listarLinks() {
-        return ResponseEntity.ok(linkRepository.findAll());
+    @Operation(summary = "Listar meus links", description = "Retorna exclusivamente a lista de links pertencentes ao usuário autenticado.")
+    public ResponseEntity<List<Link>> listarTodos(@AuthenticationPrincipal OAuth2User usuarioLogado) {
+        String emailAutenticado = usuarioLogado.getAttribute("email");
+        List<Link> meusLinks = linkRepository.findByUsuarioEmail(emailAutenticado);
+
+        return ResponseEntity.ok(meusLinks);
     }
 
     @GetMapping("/{id}")
+    @Operation(summary = "Buscar link por ID", description = "Retorna os detalhes de um link específico, desde que pertença ao usuário autenticado.")
     public ResponseEntity<Link> buscarLink(
-            @Parameter(description = "ID numérico gerado pelo banco de dados", example = "1")
-            @PathVariable Long id) {
-        Optional<Link> link = linkRepository.findById(id);
-        return link.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+            @Parameter(description = "ID numérico gerado pelo banco de dados", example = "1") @PathVariable Long id,
+            @AuthenticationPrincipal OAuth2User usuarioLogado) {
+        String emailAutenticado = usuarioLogado.getAttribute("email");
+
+        return linkRepository.findByIdAndUsuarioEmail(id, emailAutenticado)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Link> atualizarLink(@PathVariable Long id, @RequestBody Link linkAtualizado) {
-        return linkRepository.findById(id)
+    @Operation(summary = "Atualizar link", description = "Atualiza os dados de um link, desde que pertença ao usuário autenticado.")
+    public ResponseEntity<Link> atualizarLink(@PathVariable Long id,
+                                              @RequestBody Link linkAtualizado,
+                                              @AuthenticationPrincipal OAuth2User usuarioLogado) {
+
+        String emailAutenticado = usuarioLogado.getAttribute("email");
+
+        return linkRepository.findByIdAndUsuarioEmail(id, emailAutenticado)
                 .map(linkExistente -> {
                     linkExistente.setUrl(linkAtualizado.getUrl());
                     linkExistente.setTitulo(linkAtualizado.getTitulo());
@@ -96,9 +110,15 @@ public class LinkController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deletarLink(@PathVariable Long id) {
-        if (linkRepository.existsById(id)) {
-            linkRepository.deleteById(id);
+    @Operation(summary = "Deletar link", description = "Remove um link do sistema, exigindo que o usuário autenticado seja o dono.")
+    public ResponseEntity<Void> deletarLink(@PathVariable Long id,
+                                            @AuthenticationPrincipal OAuth2User usuarioLogado) {
+        String emailAutenticado = usuarioLogado.getAttribute("email");
+
+        Optional<Link> linkExistente = linkRepository.findByIdAndUsuarioEmail(id, emailAutenticado);
+
+        if (linkExistente.isPresent()) {
+            linkRepository.delete(linkExistente.get());
             return ResponseEntity.noContent().build();
         }
         return ResponseEntity.notFound().build();
