@@ -68,7 +68,6 @@ public class Link {
                 LocalDateTime dataLimite,
                 StatusLink status,
                 Prioridade prioridade,
-                Usuario usuario,
                 List<Tag> tags) {
         this.url = url;
         this.titulo = titulo;
@@ -78,7 +77,6 @@ public class Link {
         this.dataLimite = dataLimite;
         this.status = status;
         this.prioridade = prioridade;
-        this.usuario = usuario;
         this.tags = tags;
     }
 

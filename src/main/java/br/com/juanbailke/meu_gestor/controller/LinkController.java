@@ -2,6 +2,7 @@ package br.com.juanbailke.meu_gestor.controller;
 
 import br.com.juanbailke.meu_gestor.model.Link;
 import br.com.juanbailke.meu_gestor.repository.LinkRepository;
+import br.com.juanbailke.meu_gestor.repository.UsuarioRepository;
 import br.com.juanbailke.meu_gestor.service.ScrapingService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -10,6 +11,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,10 +25,12 @@ public class LinkController {
 
     private final LinkRepository linkRepository;
     private final ScrapingService scrapingService;
+    private final UsuarioRepository usuarioRepository;
 
-    public LinkController(LinkRepository linkRepository) {
+    public LinkController(LinkRepository linkRepository, UsuarioRepository usuarioRepository) {
         this.linkRepository = linkRepository;
         this.scrapingService = new ScrapingService();
+        this.usuarioRepository = usuarioRepository;
     }
 
     @PostMapping
@@ -34,7 +39,13 @@ public class LinkController {
             @ApiResponse(responseCode = "201", description = "Link criado com sucesso"),
             @ApiResponse(responseCode = "400", description = "URL inválida ou ausente")
     })
-    public ResponseEntity<Link> criarLink(@RequestBody Link link) {
+    public ResponseEntity<Link> criarLink(@RequestBody Link link,
+                                          @AuthenticationPrincipal OAuth2User usuarioLogado) {
+        //Extrai o email autenticado
+        String emailAutenticado = usuarioLogado.getAttribute("email");
+
+        usuarioRepository.findByEmail(emailAutenticado).ifPresent(link::setUsuario);
+
         if (link.getUrl() != null && !link.getUrl().isEmpty()) {
             ScrapingService.MetaDados metaDados = scrapingService.extrair(link.getUrl());
 
