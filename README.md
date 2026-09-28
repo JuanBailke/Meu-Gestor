@@ -12,7 +12,7 @@ Este projeto faz parte de uma pós-graduação em Tecnologia Java e serve como u
 - [x] **Gestão de Links:** CRUD completo de links com título, descrição e capa.
 - [x] **Web Scraping Autônomo:** Extração automática de metadados (título, imagem) da URL salva utilizando Jsoup.
 - [ ] **Classificação e Prioridade:** Definição de tempo estimado de leitura (ex: 5 min, 2 horas) e nível de prioridade (Baixa, Média, Alta).
-- [ ] **Quadro Kanban (Status):** Fluxo de links entre "Na fila", "Em andamento", "Concluído" e "Arquivado".
+- [x] **Quadro Kanban (Status):** Fluxo de links entre "Na fila", "Em andamento", "Concluído" e "Arquivado".
 - [ ] **Tags Customizadas:** Categorização flexível (ex: #Vagas, #Cursos, #Java) em relacionamento Muitos-para-Muitos.
 - [ ] **Sistema Anti-Procrastinação:** Alertas em background para links esquecidos ou próximos à data limite.
 - [ ] **Validação e Integridade:** Implementação de Expressões Regulares (Regex) nas entidades (ex: validação rígida de padrão hexadecimal para cores das tags).

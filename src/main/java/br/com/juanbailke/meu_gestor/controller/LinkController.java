@@ -1,6 +1,7 @@
 package br.com.juanbailke.meu_gestor.controller;
 
 import br.com.juanbailke.meu_gestor.model.Link;
+import br.com.juanbailke.meu_gestor.model.enums.StatusLink;
 import br.com.juanbailke.meu_gestor.repository.LinkRepository;
 import br.com.juanbailke.meu_gestor.repository.UsuarioRepository;
 import br.com.juanbailke.meu_gestor.service.ScrapingService;
@@ -122,5 +123,33 @@ public class LinkController {
             return ResponseEntity.noContent().build();
         }
         return ResponseEntity.notFound().build();
+    }
+
+    //Quadro KANBAN
+
+    @GetMapping("/status/{status}")
+    @Operation(summary = "Filtrar links por status", description = "Retorna os links do usuário isolados por coluna do Kanban.")
+    public ResponseEntity<List<Link>> buscarPorStatus(@PathVariable StatusLink status,
+                                                      @AuthenticationPrincipal OAuth2User usuarioLogado) {
+        String emailAutenticado = usuarioLogado.getAttribute("email");
+
+        var linksFiltrados = linkRepository.findByUsuarioEmailAndStatus(emailAutenticado, status);
+        return ResponseEntity.ok(linksFiltrados);
+    }
+
+    @PatchMapping("/{id}/status")
+    @Operation(summary = "Mover links no Kanban", description = "Atualiza rapidamente o status de um link (ideal para Drag and Drop).")
+    public ResponseEntity<Link> atualizarStatusKanban(@PathVariable Long id,
+                                                      @RequestParam StatusLink novoStatus,
+                                                      @AuthenticationPrincipal OAuth2User usuarioLogado) {
+        String emailAutenticado = usuarioLogado.getAttribute("email");
+
+        return linkRepository.findByIdAndUsuarioEmail(id, emailAutenticado)
+                .map(linkExistente -> {
+                    linkExistente.setStatus(novoStatus);
+                    Link link = linkRepository.save(linkExistente);
+                    return ResponseEntity.ok(link);
+                })
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 }
